@@ -2,7 +2,6 @@
 #include "CellTower.h"
 #include "CellularCore.h"
 #include "UserDevice.h"
-#include "Message.h"
 #include "ConfigParser.h"
 #include "basicIO.h"
 #include "StringUtils.h"
@@ -48,7 +47,6 @@ UserDevice** createUserDevices(unsigned int count, unsigned int messagesPerUser)
     
     return devices;
 }
-
 
 void simulate2G(const Config2G& cfg, unsigned int coreCapacity) {
     std::lock_guard<std::mutex> lock(outputMutex);
@@ -117,8 +115,11 @@ void simulate2G(const Config2G& cfg, unsigned int coreCapacity) {
     io.outputstring(")");
     io.terminate();
     
-    unsigned int effectiveMsgs = (messagesPerUser * (100 + cfg.overhead)) / 100;
+    // Fixed overhead calculation with proper rounding
+    double effectiveMsgsFloat = (messagesPerUser * (100.0 + cfg.overhead)) / 100.0;
+    unsigned int effectiveMsgs = (unsigned int)(effectiveMsgsFloat + 0.5);
     unsigned int coreLimit = coreCapacity / effectiveMsgs;
+    
     io.outputstring("Core Limit: ");
     io.outputint(coreLimit);
     io.outputstring(" users (");
@@ -243,8 +244,11 @@ void simulate3G(const Config3G& cfg, unsigned int coreCapacity) {
     io.outputstring(")");
     io.terminate();
     
-    unsigned int effectiveMsgs = (cfg.messagesPerUser * (100 + cfg.overhead)) / 100;
+    // Fixed overhead calculation with proper rounding
+    double effectiveMsgsFloat = (cfg.messagesPerUser * (100.0 + cfg.overhead)) / 100.0;
+    unsigned int effectiveMsgs = (unsigned int)(effectiveMsgsFloat + 0.5);
     unsigned int coreLimit = coreCapacity / effectiveMsgs;
+    
     io.outputstring("Core Limit: ");
     io.outputint(coreLimit);
     io.outputstring(" users (");
@@ -385,7 +389,11 @@ void simulate4G(const Config4G& cfg, unsigned int coreCapacity) {
     
     io.outputstring("\nCore Calculation:");
     io.terminate();
-    unsigned int effectiveMsgs = (cfg.messagesPerUser * (100 + cfg.overhead)) / 100;
+    
+    // Fixed overhead calculation with proper rounding
+    double effectiveMsgsFloat = (cfg.messagesPerUser * (100.0 + cfg.overhead)) / 100.0;
+    unsigned int effectiveMsgs = (unsigned int)(effectiveMsgsFloat + 0.5);
+    
     io.outputstring("  Messages per user with overhead: ");
     io.outputint(effectiveMsgs);
     io.terminate();
@@ -396,6 +404,7 @@ void simulate4G(const Config4G& cfg, unsigned int coreCapacity) {
     io.outputstring(" users");
     io.terminate();
     
+    // Calculate required cores with proper ceiling
     unsigned int coresNeeded = (frequencyLimit * effectiveMsgs + coreCapacity - 1) / coreCapacity;
     io.outputstring("  Required cores: ");
     io.outputint(coresNeeded);
@@ -538,7 +547,11 @@ void simulate5G(const Config5G& cfg, unsigned int coreCapacity) {
     
     io.outputstring("\nCore Calculation:");
     io.terminate();
-    unsigned int effectiveMsgs = (cfg.messagesPerUser * (100 + cfg.overhead)) / 100;
+    
+    // Fixed overhead calculation with proper rounding
+    double effectiveMsgsFloat = (cfg.messagesPerUser * (100.0 + cfg.overhead)) / 100.0;
+    unsigned int effectiveMsgs = (unsigned int)(effectiveMsgsFloat + 0.5);
+    
     io.outputstring("  Messages per user with overhead: ");
     io.outputint(effectiveMsgs);
     io.terminate();
@@ -549,6 +562,7 @@ void simulate5G(const Config5G& cfg, unsigned int coreCapacity) {
     io.outputstring(" users");
     io.terminate();
     
+    // Calculate required cores with proper ceiling
     unsigned int coresNeeded = (frequencyLimit * effectiveMsgs + coreCapacity - 1) / coreCapacity;
     io.outputstring("  Required cores: ");
     io.outputint(coresNeeded);
@@ -594,7 +608,6 @@ void simulate5G(const Config5G& cfg, unsigned int coreCapacity) {
     
     Core5G* core = new Core5G(1, towerCapacity, cfg.antennas, true);
     
-    unsigned int numChannels = cfg.bandwidth / cfg.channelBw;
     unsigned int usersPerChannel = cfg.usersPerMHz;
     
     CellTower* tower = new CellTower(1, core, cfg.bandwidth, 
