@@ -389,27 +389,28 @@ void simulate4G(const Config4G& cfg, unsigned int coreCapacity) {
     
     io.outputstring("\nCore Calculation:");
     io.terminate();
-    
-    // Fixed overhead calculation with proper rounding
+
+    // Keep floating point for accurate calculations
     double effectiveMsgsFloat = (cfg.messagesPerUser * (100.0 + cfg.overhead)) / 100.0;
-    unsigned int effectiveMsgs = (unsigned int)(effectiveMsgsFloat + 0.5);
-    
+    unsigned int effectiveMsgs = (unsigned int)(effectiveMsgsFloat + 0.5); // For display only
+
     io.outputstring("  Messages per user with overhead: ");
     io.outputint(effectiveMsgs);
     io.terminate();
-    
-    unsigned int singleCoreLimit = coreCapacity / effectiveMsgs;
+
+    // Use float for calculations
+    unsigned int singleCoreLimit = (unsigned int)(coreCapacity / effectiveMsgsFloat);
     io.outputstring("  Single core limit: ");
     io.outputint(singleCoreLimit);
     io.outputstring(" users");
     io.terminate();
-    
-    // Calculate required cores with proper ceiling
-    unsigned int coresNeeded = (frequencyLimit * effectiveMsgs + coreCapacity - 1) / coreCapacity;
+
+    // Calculate required cores using float
+    unsigned int coresNeeded = (unsigned int)((frequencyLimit * effectiveMsgsFloat / coreCapacity) + 0.999);
     io.outputstring("  Required cores: ");
     io.outputint(coresNeeded);
     io.terminate();
-    
+
     unsigned int multiCoreLimit = singleCoreLimit * coresNeeded;
     io.outputstring("  Multi-core limit: ");
     io.outputint(multiCoreLimit);
@@ -547,27 +548,28 @@ void simulate5G(const Config5G& cfg, unsigned int coreCapacity) {
     
     io.outputstring("\nCore Calculation:");
     io.terminate();
-    
-    // Fixed overhead calculation with proper rounding
+
+    // Keep floating point for accurate calculations
     double effectiveMsgsFloat = (cfg.messagesPerUser * (100.0 + cfg.overhead)) / 100.0;
-    unsigned int effectiveMsgs = (unsigned int)(effectiveMsgsFloat + 0.5);
-    
+    unsigned int effectiveMsgs = (unsigned int)(effectiveMsgsFloat + 0.5); // For display only
+
     io.outputstring("  Messages per user with overhead: ");
     io.outputint(effectiveMsgs);
     io.terminate();
-    
-    unsigned int singleCoreLimit = coreCapacity / effectiveMsgs;
+
+    // Use float for calculations
+    unsigned int singleCoreLimit = (unsigned int)(coreCapacity / effectiveMsgsFloat);
     io.outputstring("  Single core limit: ");
     io.outputint(singleCoreLimit);
     io.outputstring(" users");
     io.terminate();
-    
-    // Calculate required cores with proper ceiling
-    unsigned int coresNeeded = (frequencyLimit * effectiveMsgs + coreCapacity - 1) / coreCapacity;
+
+    // Calculate required cores using float
+    unsigned int coresNeeded = (unsigned int)((frequencyLimit * effectiveMsgsFloat / coreCapacity) + 0.999);
     io.outputstring("  Required cores: ");
     io.outputint(coresNeeded);
     io.terminate();
-    
+
     unsigned int multiCoreLimit = singleCoreLimit * coresNeeded;
     io.outputstring("  Multi-core limit: ");
     io.outputint(multiCoreLimit);
