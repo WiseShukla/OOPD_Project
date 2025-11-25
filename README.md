@@ -424,6 +424,45 @@ The Makefile provides:
   - `make run-debug` - Build and run debug version with input.txt
   - `make clean` - Remove all build artifacts
 
+
+## Capacity Verification Summary
+
+All network simulations have been verified with manual calculations. Below is the summary of capacity analysis for each generation:
+
+### Network Capacity Summary Table
+
+| Generation | Frequency Limit | Core Limit    | Tower Capacity | Limited By | Required Cores |
+|------------|-----------------|---------------|----------------|------------|----------------|
+| **2G**     | 80 users        | 454 users     | 80 users       | Frequency  | 1              |
+| **3G**     | 160 users       | 909 users     | 160 users      | Frequency  | 1              |
+| **4G**     | 12,000 users    | 12,610 users  | 12,000 users   | Frequency  | 13             |
+| **5G**     | 4,800 users     | 4,900 users   | 4,800 users    | Frequency  | 5              |
+
+### Key Observations
+
+1. **2G and 3G Networks**: Both are frequency-limited with single-core processing sufficient for handling the load.
+
+2. **4G Network**: Despite requiring 13 cores to handle the message processing overhead, the network remains frequency-limited at 12,000 users due to MIMO antenna capacity.
+
+3. **5G Network**: With massive MIMO (16 antennas), the network supports 4,800 users using only 5 cores, remaining frequency-limited.
+
+4. **Common Pattern**: All generations in this configuration are **frequency-limited** rather than core-limited, indicating that the core capacity (10,000 messages) is sufficient but the available frequency spectrum constrains the total number of users.
+
+### Calculation Methodology
+
+Each network's capacity is determined by:
+```
+Tower Capacity = MIN(Frequency Limit, Multi-Core Limit)
+```
+
+Where:
+- **Frequency Limit** = Channels × Users per Channel × MIMO Antennas (if applicable)
+- **Multi-Core Limit** = (Core Capacity / Effective Messages per User) × Required Cores
+- **Effective Messages** = Messages per User × (1 + Overhead/100)
 ## Author
 Jyoti Sokhanada Adarsh Shukla
 IIIT-Delhi
+
+
+
+
