@@ -272,7 +272,17 @@ thread3G.join();
 thread4G.join();
 thread5G.join();
 ```
+## Threading Implementation 
 
+Option 5 demonstrates **true concurrent execution** using std::thread with 
+**ordered output control**. All four network simulations execute in parallel, 
+but output is buffered and displayed in a consistent sequence (2G→3G→4G→5G).
+
+**Key Features:**
+- ✓ Genuine parallel execution (all threads run simultaneously)
+- ✓ Thread-safe design (separate buffers per thread)
+- ✓ Deterministic output (consistent ordering)
+- ✓ Custom CharBuffer implementation (no standard library dependencies)
 ## Architecture Diagram
 ```
 main()
